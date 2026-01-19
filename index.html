@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朱仲智 | 资深产品体验专家 - 构建国家级数字基础设施</title>
+    
+    <!-- 引入 Tailwind CSS 进行快速样式构建 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入 GSAP 动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- 引入 Lucide 图标库 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- 字体配置 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* 隐藏滚动条但保持滚动功能 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* 玻璃拟态效果 */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 霓虹光效文字 */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        /* 动态背景 Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* 项目卡片悬停效果 */
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 20px 40px -10px rgba(6, 182, 212, 0.15);
+        }
+
+        /* 模拟 UI 元素的动画 */
+        .mock-ui-bar {
+            animation: pulse-width 3s infinite ease-in-out;
+        }
+        @keyframes pulse-width {
+            0%, 100% { width: 40%; opacity: 0.5; }
+            50% { width: 80%; opacity: 1; }
+        }
+        
+        .grid-bg {
+            background-image: radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- 动态背景 -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-lg">Z</div>
+                    <span class="font-bold text-xl tracking-tight text-white">Zhu Zhongzhi</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#work" class="hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">精选案例</a>
+                        <a href="#methodology" class="hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">专业背书</a>
+                        <a href="#experience" class="hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium">履历</a>
+                        <a href="#contact" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-all shadow-lg shadow-cyan-500/20">联系我</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            
+            <!-- 标签 -->
+            <div class="gsap-hero opacity-0 translate-y-10 mb-6 flex justify-center gap-3 flex-wrap">
+                <span class="px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wider uppercase">中国移动学院特聘讲师</span>
+                <span class="px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-400 text-xs font-semibold tracking-wider uppercase">蓝湖 / Eagle 签约合作伙伴</span>
+            </div>
+
+            <!-- 主标题 -->
+            <h1 class="gsap-hero opacity-0 translate-y-10 text-5xl md:text-7xl font-bold tracking-tight mb-6">
+                构建国家级 <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-glow">数字基础设施</span>
+            </h1>
+
+            <!-- 副标题 -->
+            <p class="gsap-hero opacity-0 translate-y-10 mt-4 max-w-2xl mx-auto text-xl text-slate-400 font-light leading-relaxed">
+                16年+ 经验 | 现居深圳 | 前 360 / 南网 / 天地控股 设计负责人<br/>
+                专注于 <strong>B端企业信息化</strong> 与 <strong>G端智慧政务</strong> 的复杂系统体验重构。
+            </p>
+
+            <!-- 按钮 -->
+            <div class="gsap-hero opacity-0 translate-y-10 mt-10 flex justify-center gap-4">
+                <a href="#work" class="px-8 py-3 rounded-lg bg-white text-slate-900 font-bold hover:bg-slate-200 transition-colors flex items-center gap-2">
+                    查看精选案例 <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </a>
+                <a href="#experience" class="px-8 py-3 rounded-lg glass-card text-white font-medium hover:bg-white/10 transition-colors">
+                    了解我的背景
+                </a>
+            </div>
+        </div>
+
+        <!-- 底部滚动提示 -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-50">
+            <i data-lucide="mouse" class="w-6 h-6"></i>
+        </div>
+    </section>
+
+    <!-- 精选案例区域 -->
+    <section id="work" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">核心项目展示</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">针对高保密性、高复杂度的国家级与企业级系统，提供从逻辑架构到视觉落地的全栈解决方案。</p>
+            </div>
+
+            <!-- 维度一：工业互联 (Mining & Energy) -->
+            <div class="mb-20">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                    <span class="text-cyan-400 text-sm font-bold tracking-widest uppercase">01. 工业互联与数字孪生</span>
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 项目卡片 1：中矿集团 -->
+                    <a href="zkDetail.html" class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer relative block">
+                        <!-- 模拟 UI 视觉区 -->
+                        <div class="h-64 bg-slate-800/50 relative overflow-hidden flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 z-10"></div>
+                            <!-- 抽象的 3D 矿山数据图表 -->
+                            <div class="relative z-0 w-3/4 h-3/4 border border-cyan-500/20 rounded-lg p-4 grid grid-cols-3 gap-2 opacity-80 group-hover:scale-105 transition-transform duration-700">
+                                <div class="col-span-2 row-span-2 border border-cyan-500/30 bg-cyan-900/10 rounded flex items-center justify-center">
+                                    <div class="w-16 h-16 border-2 border-cyan-400 rounded-full animate-spin border-t-transparent"></div>
+                                </div>
+                                <div class="bg-slate-700/30 rounded mock-ui-bar"></div>
+                                <div class="bg-slate-700/30 rounded mock-ui-bar" style="animation-delay: 0.2s"></div>
+                                <div class="col-span-3 h-8 bg-slate-700/30 rounded mt-2 flex items-center px-2 gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                    <div class="h-1 w-full bg-slate-600 rounded overflow-hidden">
+                                        <div class="h-full w-2/3 bg-cyan-500"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                                中矿集团铊矿采矿系统 
+                                <i data-lucide="arrow-right" class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                            </h3>
+                            <p class="text-slate-400 text-sm mb-4">3D 可视化 · 实时监控 · 生产调度</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                基于 WebGL 技术的矿山数字孪生平台。将复杂的井下传感器数据转化为直观的 3D 可视化界面，降低了安全监控的认知负荷，提升了调度效率。
+                            </p>
+                            <div class="flex gap-2 text-xs font-mono text-cyan-300/80">
+                                <span class="bg-cyan-900/30 px-2 py-1 rounded">Data Viz</span>
+                                <span class="bg-cyan-900/30 px-2 py-1 rounded">B-End</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 项目卡片 2：中石化 -->
+                    <div class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div class="h-64 bg-slate-800/50 relative overflow-hidden flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 z-10"></div>
+                            <!-- 抽象的全球地图连线 -->
+                            <div class="w-full h-full opacity-60 group-hover:scale-105 transition-transform duration-700 relative">
+                                <svg viewBox="0 0 400 200" class="w-full h-full">
+                                    <path d="M50,100 Q200,50 350,120" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="5,5">
+                                        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="3s" repeatCount="indefinite" />
+                                    </path>
+                                    <circle cx="50" cy="100" r="3" fill="#60a5fa" />
+                                    <circle cx="350" cy="120" r="3" fill="#60a5fa" />
+                                    <path d="M80,150 Q150,180 300,80" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.5" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">中石化全球采购系统</h3>
+                            <p class="text-slate-400 text-sm mb-4">供应链管理 · 复杂表单 · 全球化</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                重构涉及数万供应商的全球供应链管理平台。通过模块化设计和自定义工作流，解决了跨国采购流程繁琐、信息不透明的痛点。
+                            </p>
+                            <div class="flex gap-2 text-xs font-mono text-blue-300/80">
+                                <span class="bg-blue-900/30 px-2 py-1 rounded">Supply Chain</span>
+                                <span class="bg-blue-900/30 px-2 py-1 rounded">ERP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 维度二：智慧警务 (Public Security) -->
+            <div class="mb-20">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                    <span class="text-indigo-400 text-sm font-bold tracking-widest uppercase">02. 智慧警务与安防</span>
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 项目卡片 3：公安部安保 -->
+                    <div class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div class="h-64 bg-slate-900 relative overflow-hidden flex flex-wrap content-start p-1">
+                             <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 z-10"></div>
+                             <!-- 模拟监控画面网格 -->
+                             <div class="w-1/3 h-1/2 border border-slate-800 bg-slate-800/50 p-1 relative">
+                                <div class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                             </div>
+                             <div class="w-1/3 h-1/2 border border-slate-800 bg-slate-800/30"></div>
+                             <div class="w-1/3 h-1/2 border border-slate-800 bg-slate-800/50"></div>
+                             <div class="w-2/3 h-1/2 border border-slate-800 bg-slate-800/40 flex items-center justify-center text-slate-600 text-xs font-mono">
+                                 [SIGNAL ENCRYPTED]
+                             </div>
+                             <div class="w-1/3 h-1/2 border border-slate-800 bg-indigo-900/10 border-indigo-500/30"></div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">公安部安保视频系统</h3>
+                            <p class="text-slate-400 text-sm mb-4">视频流处理 · 多屏协同 · 指挥调度</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                为国家级重大活动设计的安保指挥系统。重点解决了海量视频流的低延迟切换与多屏协同指挥交互，确保零故障运行。
+                            </p>
+                            <div class="flex gap-2 text-xs font-mono text-indigo-300/80">
+                                <span class="bg-indigo-900/30 px-2 py-1 rounded">Security</span>
+                                <span class="bg-indigo-900/30 px-2 py-1 rounded">Live Stream</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目卡片 4：卡口管理 -->
+                    <div class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div class="h-64 bg-slate-900 relative overflow-hidden flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 z-10"></div>
+                            <!-- 模拟识别框 -->
+                            <div class="w-32 h-32 border-2 border-yellow-500/50 rounded-lg relative group-hover:scale-110 transition-transform">
+                                <div class="absolute -top-3 left-0 bg-yellow-500/20 text-yellow-400 text-[10px] px-1">TARGET DETECTED</div>
+                                <div class="absolute inset-0 bg-scan-line opacity-20"></div>
+                                <div class="absolute bottom-0 w-full h-1 bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]"></div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">吉林省公安部卡口管理系统</h3>
+                            <p class="text-slate-400 text-sm mb-4">大数据识别 · 预警系统 · GIS地图</p>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                                基于 GIS 地图的大数据卡口预警系统。设计了暗黑模式下的高对比度预警视觉规范，辅助警务人员快速识别高危目标。
+                            </p>
+                            <div class="flex gap-2 text-xs font-mono text-yellow-300/80">
+                                <span class="bg-yellow-900/30 px-2 py-1 rounded">GIS</span>
+                                <span class="bg-yellow-900/30 px-2 py-1 rounded">Big Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 维度三：政务协同 (Government) -->
+            <div class="mb-10">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                    <span class="text-red-400 text-sm font-bold tracking-widest uppercase">03. 政务协同与核心通讯</span>
+                    <div class="h-px bg-slate-700 flex-1"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 项目卡片 5：两会系统 -->
+                    <div class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div class="p-8 h-full flex flex-col justify-between">
+                            <div>
+                                <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-6 text-red-500">
+                                    <i data-lucide="video" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors">两会视频会议系统</h3>
+                                <p class="text-slate-400 text-sm mb-4">极简交互 · 零失误设计 · 高稳定性</p>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    服务于最高级别会议的通讯系统。设计原则是“绝对的易用性”与“零误触”，采用超大触控热区与极简流程，保障会议顺利进行。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目卡片 6：iTarms -->
+                    <div class="gsap-card project-card glass-card rounded-2xl overflow-hidden group cursor-pointer">
+                        <div class="p-8 h-full flex flex-col justify-between">
+                            <div>
+                                <div class="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-6 text-emerald-500">
+                                    <i data-lucide="server" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">iTarms 企业信息化管理平台</h3>
+                                <p class="text-slate-400 text-sm mb-4">SaaS架构 · 权限管理 · 效率工具</p>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    大型企业级信息化 PaaS/SaaS 平台。重构了复杂的 RBAC 权限模型与工作流配置界面，显著提升了企业内部的流转效率。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 保密声明 -->
+            <div class="mt-12 p-4 border border-slate-700/50 rounded bg-slate-800/30 text-center">
+                <p class="text-slate-500 text-xs italic">
+                    <i data-lucide="lock" class="w-3 h-3 inline mr-1"></i>
+                    注：鉴于上述项目的保密性质（涉及国家安全及企业核心数据），所有展示数据均已脱敏处理，界面为作品集专用概念重绘版本。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 行业影响力与背书 -->
+    <section id="methodology" class="py-24 relative bg-slate-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center">行业背书 & 影响力</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 讲师身份 -->
+                <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                    <div class="mb-6 inline-flex p-4 rounded-full bg-purple-500/10 text-purple-400">
+                        <i data-lucide="mic-2" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">中国移动学院</h3>
+                    <p class="text-purple-400 font-medium text-sm mb-4">特聘交互讲师</p>
+                    <p class="text-slate-400 text-sm">负责讲授 B 端体验设计思维，赋能内部产品与设计团队，建立标准化的设计方法论。</p>
+                </div>
+
+                <!-- 蓝湖 -->
+                <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                    <div class="mb-6 inline-flex p-4 rounded-full bg-blue-500/10 text-blue-400">
+                        <i data-lucide="layers" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">蓝湖 Lanhu</h3>
+                    <p class="text-blue-400 font-medium text-sm mb-4">签约合作伙伴</p>
+                    <p class="text-slate-400 text-sm">深度参与产研协作工具的推广与实践，致力于提升大型团队的设计工程化效率。</p>
+                </div>
+
+                <!-- Eagle -->
+                <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-cyan-500"></div>
+                    <div class="mb-6 inline-flex p-4 rounded-full bg-cyan-500/10 text-cyan-400">
+                        <i data-lucide="image" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Eagle</h3>
+                    <p class="text-cyan-400 font-medium text-sm mb-4">签约合作伙伴</p>
+                    <p class="text-slate-400 text-sm">作为素材管理专家，构建高效的设计资产管理体系，推动设计资源的结构化沉淀。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 职业履历 -->
+    <section id="experience" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-12 text-center">职业里程碑</h2>
+            
+            <div class="relative border-l border-slate-700 ml-4 space-y-12">
+                <!-- 天地控股 -->
+                <div class="ml-10 relative">
+                    <div class="absolute -left-[54px] top-0 w-8 h-8 rounded-full bg-slate-800 border-2 border-cyan-500 flex items-center justify-center z-10">
+                        <div class="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">产品经理 & 设计总监</h3>
+                        <span class="text-cyan-400 text-sm font-medium">天地控股</span>
+                        <p class="mt-2 text-slate-400 text-sm">主导集团核心业务系统的产品规划与体验升级，负责多条业务线的设计管理工作。</p>
+                    </div>
+                </div>
+
+                <!-- 清华同方 -->
+                <div class="ml-10 relative">
+                    <div class="absolute -left-[54px] top-0 w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center z-10">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">资深交互设计师</h3>
+                        <span class="text-slate-400 text-sm font-medium">清华同方</span>
+                        <p class="mt-2 text-slate-400 text-sm">参与大型安防监控系统与智慧城市项目的交互设计。</p>
+                    </div>
+                </div>
+
+                <!-- 南方电网 -->
+                <div class="ml-10 relative">
+                    <div class="absolute -left-[54px] top-0 w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center z-10">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">UX 设计专家</h3>
+                        <span class="text-slate-400 text-sm font-medium">南方电网</span>
+                        <p class="mt-2 text-slate-400 text-sm">负责电力系统内部管理软件的体验优化，深入理解能源行业的复杂业务逻辑。</p>
+                    </div>
+                </div>
+
+                <!-- 奇虎 360 -->
+                <div class="ml-10 relative">
+                    <div class="absolute -left-[54px] top-0 w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center z-10">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">UI/UX 设计师</h3>
+                        <span class="text-slate-400 text-sm font-medium">奇虎 360</span>
+                        <p class="mt-2 text-slate-400 text-sm">参与亿级用户产品的界面设计与迭代，积累了深厚的 C 端用户体验设计经验。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部联系 -->
+    <footer id="contact" class="py-12 border-t border-slate-800 bg-slate-900 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-6">Let's Build Something Complex.</h2>
+            <p class="text-slate-400 mb-8 max-w-lg mx-auto">
+                如果您正在寻找能够驾驭复杂系统、推动数字化转型的设计专家，欢迎与我联系。
+            </p>
+            <div class="flex justify-center gap-8 flex-wrap items-center">
+                <a href="tel:13510240205" class="flex items-center gap-2 text-cyan-400 hover:text-white transition-colors text-lg font-medium">
+                    <i data-lucide="phone" class="w-6 h-6"></i> 135-1024-0205
+                </a>
+                <span class="flex items-center gap-2 text-slate-400">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i> 深圳
+                </span>
+            </div>
+            <p class="mt-12 text-slate-600 text-xs">© 2024 Zhu Zhongzhi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 脚本逻辑 -->
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 注册 GSAP 插件
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero 区域入场动画
+        gsap.to(".gsap-hero", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out",
+            delay: 0.5
+        });
+
+        // 滚动触发卡片动画
+        gsap.utils.toArray('.gsap-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg');
+            } else {
+                nav.classList.remove('shadow-lg');
+            }
+        });
+
+        // --- Canvas 粒子背景逻辑 ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        // 粒子配置
+        const particleCount = 60; // 粒子数量
+        const connectionDistance = 150; // 连线距离
+        const mouseDistance = 200; // 鼠标互动距离
+
+        let mouse = { x: null, y: null };
+
+        // 监听鼠标移动
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('resize', resize);
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 边界反弹
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // 鼠标互动
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouseDistance) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouseDistance - distance) / mouseDistance;
+                        const directionX = forceDirectionX * force * 0.6;
+                        const directionY = forceDirectionY * force * 0.6;
+                        this.x -= directionX;
+                        this.y -= directionY;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.5)'; // Cyan color
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                // 绘制连线
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        let opacity = 1 - (distance / connectionDistance);
+                        ctx.strokeStyle = 'rgba(56, 189, 248, ' + opacity * 0.2 + ')';
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        resize();
+        initParticles();
+        animateParticles();
+
+    </script>
+</body>
+</html>
